@@ -1,7 +1,7 @@
 
 -------------------------------------------------
 --Rebuild or Reorganize Indexes
---Author: Dan Anderson
+--Author: Dan Anderson (danderson@nexidia.com)
 -------------------------------------------------
 /*
 
@@ -24,12 +24,13 @@
 */
 
 --Options for tuning script:
-DECLARE @fill_factor INT = 95; --anything > 70 and <= 95 is ideal.
+DECLARE @fill_factor INT = 95; --anything > 70 and <= 95 is ideal. Lower numbers will increase the size of the index on disk.
 DECLARE @nonclustered_frag_percent DECIMAL = 20.00; --good starting range = 20.00
 DECLARE @clustered_frag_percent DECIMAL = 60.00; --good starting range >= 60.00
-DECLARE @rebuild_cutoff DECIMAL = 40.00; --anything >= 35.00 should be rebuilt instead of reorganized.
+DECLARE @rebuild_cutoff DECIMAL = 40.00; --anything >= 40.00 should be rebuilt instead of reorganized.
 DECLARE @index_pages INT = 1000; --index fragmentation below 1000 pages doesn't really matter.
 DECLARE @time_cutoff INT = 3; --number of hours to run before stopping.
+DECLARE @debug_mode BIT = 1; --1 = "What if" mode, will print results. 0 = production mode, will execute statements.
 
 
 ---------------------------------------
@@ -114,7 +115,10 @@ DECLARE @row_id INT;
 
 
 --Debug the work table:
---SELECT * FROM @suspect_indexes ORDER BY pages_used
+IF (@debug_mode = 1)
+BEGIN
+	SELECT * FROM @suspect_indexes ORDER BY pages_used;
+END
 
 ---------------------------------------
 --Start performing the work:
@@ -139,8 +143,14 @@ BEGIN
 			SET @sql_statement = (SELECT sql_statement FROM @suspect_indexes WHERE row_id = @row_id);
 
 			--Execute the statement:
-			--PRINT @sql_statement;
-			EXEC (@sql_statement);
+			IF (@debug_mode = 1)
+				BEGIN
+					PRINT @sql_statement;
+				END
+			ELSE
+				BEGIN
+					EXEC (@sql_statement);
+				END
 
 			--Setup new work item:
 			DELETE FROM @suspect_indexes WHERE row_id = @row_id;
