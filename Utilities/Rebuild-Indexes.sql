@@ -1,7 +1,7 @@
 
 -------------------------------------------------
 --Rebuild or Reorganize Indexes
---Author: Dan Anderson (danderson@nexidia.com)
+--Author: Dan Anderson
 -------------------------------------------------
 /*
 
