@@ -1,7 +1,7 @@
 
 -------------------------------------------------
 --Rebuild or Reorganize Indexes
---Author: Dan Anderson (danderson@nexidia.com)
+--Author: Dan Anderson
 -------------------------------------------------
 /*
 
@@ -20,6 +20,9 @@
 
 @time_cutoff = the maximum number of hours the script should execute. Note, this will stop any
 			   further operations, however the current rebuild/reorganize will continue.
+
+@debug_mode = If this is set to 1, the script will just print out the work table and the corresponding SQL statements.
+	      If it is set to 0, it will not print anything, but will execute the statements.
 
 */
 
